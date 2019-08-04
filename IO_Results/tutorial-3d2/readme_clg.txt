@@ -1,0 +1,3 @@
+20070420-0909: afterRemeshBy_tutorial-3d2-1_firstRefineThenCoarsen后出现严重
+错误，很多应该是flatNd的节点变成了ridgeNd，尤其是插点加密后的区域，见图示。
+但ridgeEd和flatEd又是正确的，由此它们之间的关系变得不再一致。

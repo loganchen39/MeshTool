@@ -1,0 +1,1716 @@
+<ui version="4.0" >
+ <class>ControlPanel</class>
+ <widget class="QWidget" name="ControlPanel" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>291</width>
+    <height>591</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="windowModality" >
+      <enum>Qt::NonModal</enum>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>13</hsizetype>
+       <vsizetype>13</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>150</width>
+       <height>400</height>
+      </size>
+     </property>
+     <property name="tabShape" >
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="MeshViewer" >
+      <attribute name="title" >
+       <string>MeshViewer</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="quickSetViewportGroupBox" >
+         <property name="windowModality" >
+          <enum>Qt::NonModal</enum>
+         </property>
+         <property name="title" >
+          <string>Quick Set Viewport</string>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="viewportTextLabel" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>5</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>Viewport:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>viewportCombo</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="viewportCombo" >
+            <item>
+             <property name="text" >
+              <string>------</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Reset</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Center</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Isomet</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>X-Y Plane</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Y-X Plane</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Y-Z Plane</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Z-Y Plane</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>X-Z Plane</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Z-X Plane</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="objectsShowGroupBox" >
+         <property name="autoFillBackground" >
+          <bool>false</bool>
+         </property>
+         <property name="title" >
+          <string>Objects Show</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="1" column="1" >
+             <widget class="QCheckBox" name="hiddenLineCheckBox" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="text" >
+               <string>HiddenLine</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QCheckBox" name="vertexCheckBox" >
+              <property name="text" >
+               <string>Vertex</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QCheckBox" name="faceCheckBox" >
+              <property name="text" >
+               <string>Face</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QCheckBox" name="edgeCheckBox" >
+              <property name="text" >
+               <string>Edge</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2" >
+             <widget class="QCheckBox" name="fIdxCheckBox" >
+              <property name="text" >
+               <string>FIdx</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QCheckBox" name="eIdxCheckBox" >
+              <property name="text" >
+               <string>EIdx</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QCheckBox" name="vIdxCheckBox" >
+              <property name="text" >
+               <string>VIdx</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QCheckBox" name="lightCheckBox" >
+              <property name="text" >
+               <string>Light</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QCheckBox" name="vNormCheckBox" >
+              <property name="text" >
+               <string>VNorm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1" >
+             <widget class="QCheckBox" name="coordsCheckBox" >
+              <property name="text" >
+               <string>Coords</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QCheckBox" name="fNormCheckBox" >
+              <property name="text" >
+               <string>FNorm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2" >
+             <widget class="QCheckBox" name="bBoxCheckBox" >
+              <property name="text" >
+               <string>BBox</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="QCheckBox" name="lightDirCheckBox" >
+              <property name="text" >
+               <string>LightDir</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2" >
+             <widget class="QCheckBox" name="editLitDirCheckBox" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>EditLitDir</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QCheckBox" name="shadeSmoothCheckBox" >
+              <property name="text" >
+               <string>ShadeSmooth</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
+             <widget class="QCheckBox" name="colorMaterialCheckBox" >
+              <property name="text" >
+               <string>ColorMaterial</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" >
+             <widget class="QCheckBox" name="inertiaCheckBox" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Inertia</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2" >
+             <widget class="QCheckBox" name="perspectiveCheckBox" >
+              <property name="text" >
+               <string>Perspective</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_2" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="elemTypeTextLabel" >
+              <property name="text" >
+               <string>Elem Type:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>elemTypeComboBox</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="elemTypeComboBox" >
+              <item>
+               <property name="text" >
+                <string>---</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Vertex</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Edge</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Face</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="indexTextLabel" >
+              <property name="text" >
+               <string>Index:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>indexLineEdit</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="indexLineEdit" />
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPushButton" name="locatePushButton" >
+            <property name="text" >
+             <string>Locate</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="propertiesPushButton" >
+              <property name="text" >
+               <string>Properties</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>80</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="FeatureDetection" >
+      <attribute name="title" >
+       <string>FeatureDetection</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="algoAndParamGroupBox" >
+         <property name="title" >
+          <string>Algorithms&amp;&amp;Parameters</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QToolBox" name="algoAndParamToolBox" >
+            <property name="currentIndex" >
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="page" >
+             <property name="geometry" >
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>212</width>
+               <height>87</height>
+              </rect>
+             </property>
+             <attribute name="label" >
+              <string>Basic Algorithm</string>
+             </attribute>
+             <layout class="QGridLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="cNdAngleThreshLabel" >
+                <property name="text" >
+                 <string>Corner-Node Angle Thresh:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>cNdAngleThreshLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="rEgAngleThreshLabel" >
+                <property name="text" >
+                 <string>Ridge-Edge Angle Thresh:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>rEdAngleThreshLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QLineEdit" name="cNdPromAngleThreshLineEdit" />
+              </item>
+              <item row="0" column="1" >
+               <widget class="QLineEdit" name="rEdAngleThreshLineEdit" />
+              </item>
+              <item row="1" column="1" >
+               <widget class="QLineEdit" name="cNdAngleThreshLineEdit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="cNdPromAngleThreshLabel" >
+                <property name="text" >
+                 <string>Corner-Node Prom Anle Thresh:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>cNdPromAngleThreshLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="page_2" >
+             <property name="geometry" >
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>98</width>
+               <height>28</height>
+              </rect>
+             </property>
+             <attribute name="label" >
+              <string>mtoolsurf's Algorithm</string>
+             </attribute>
+            </widget>
+            <widget class="QWidget" name="page_3" >
+             <property name="geometry" >
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>98</width>
+               <height>28</height>
+              </rect>
+             </property>
+             <attribute name="label" >
+              <string>Jiang's Algorithm</string>
+             </attribute>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="applyPushButton" >
+              <property name="text" >
+               <string>Apply</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>211</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolBox" name="featureViewAndEditToolBox" >
+         <property name="enabled" >
+          <bool>true</bool>
+         </property>
+         <property name="currentIndex" >
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="page_4" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>98</width>
+            <height>34</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Feature View</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QSplitter" name="splitter_2" >
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <widget class="QWidget" name="layoutWidget" >
+              <layout class="QGridLayout" >
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <item row="3" column="0" >
+                <widget class="QCheckBox" name="flatNdCheckBox" >
+                 <property name="text" >
+                  <string>FlatNd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" >
+                <widget class="QCheckBox" name="cNdIdxCheckBox" >
+                 <property name="text" >
+                  <string>CNdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2" >
+                <widget class="QCheckBox" name="bNdNormCheckBox" >
+                 <property name="text" >
+                  <string>BNdNorm</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1" >
+                <widget class="QCheckBox" name="fNdIdxCheckBox" >
+                 <property name="text" >
+                  <string>FNdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1" >
+                <widget class="QCheckBox" name="ridgeEgCheckBox" >
+                 <property name="text" >
+                  <string>RidgeEd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" >
+                <widget class="QCheckBox" name="bouNdCheckBox" >
+                 <property name="text" >
+                  <string>BouNd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2" >
+                <widget class="QCheckBox" name="cNdNormCheckBox" >
+                 <property name="text" >
+                  <string>CNdNorm</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" >
+                <widget class="QCheckBox" name="cornerNdCheckBox" >
+                 <property name="text" >
+                  <string>CornerNd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0" >
+                <widget class="QCheckBox" name="bEdIdxCheckBox" >
+                 <property name="text" >
+                  <string>BEdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2" >
+                <widget class="QCheckBox" name="fNdNormCheckBox" >
+                 <property name="text" >
+                  <string>FNdNorm</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2" >
+                <widget class="QCheckBox" name="flatEdCheckBox" >
+                 <property name="text" >
+                  <string>FlatEd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" >
+                <widget class="QCheckBox" name="ridgeNdCheckBox" >
+                 <property name="text" >
+                  <string>RidgeNd</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1" >
+                <widget class="QCheckBox" name="rNdIdxCheckBox" >
+                 <property name="text" >
+                  <string>RNdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1" >
+                <widget class="QCheckBox" name="rEdIdxCheckBox" >
+                 <property name="text" >
+                  <string>REdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2" >
+                <widget class="QCheckBox" name="rNdNormCheckBox" >
+                 <property name="text" >
+                  <string>RNdNorm</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QCheckBox" name="bNdIdxCheckBox" >
+                 <property name="text" >
+                  <string>BNdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2" >
+                <widget class="QCheckBox" name="fEdIdxCheckBox" >
+                 <property name="text" >
+                  <string>FEdIdx</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" >
+                <widget class="QCheckBox" name="bouEdCheckBox" >
+                 <property name="text" >
+                  <string>BouEd</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="layoutWidget" >
+              <layout class="QHBoxLayout" >
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="featureViewPropertiesPushButton" >
+                 <property name="text" >
+                  <string>Properties</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>231</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_5" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>237</width>
+            <height>190</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Feature Edit</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="featureEdgeEditGroupBox" >
+             <property name="title" >
+              <string>Edge</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" >
+                <property name="margin" >
+                 <number>0</number>
+                </property>
+                <property name="spacing" >
+                 <number>6</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                   <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="featureEdgeEditFromlabel" >
+                    <property name="text" >
+                     <string>From</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureEdgeEditFromLineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureEdgeEditFromLineEdit" />
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="featureEdgeEditToLabel" >
+                    <property name="text" >
+                     <string>To</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureEdgeEditTolineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureEdgeEditTolineEdit" />
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                   <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="featureEdgeEditEdIdxLabel" >
+                    <property name="text" >
+                     <string>EdIdx</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureEdgeEditEdIdxLineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureEdgeEditEdIdxLineEdit" />
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="featureEdgeEditAsLabel" >
+                <property name="text" >
+                 <string>As</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>featureEdgeEditAsComboBox</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="featureEdgeEditAsComboBox" >
+                <item>
+                 <property name="text" >
+                  <string>RidgeEd</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>FlatEd</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="featureNodeEditGroupBox" >
+             <property name="title" >
+              <string>Node</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" >
+                <property name="margin" >
+                 <number>0</number>
+                </property>
+                <property name="spacing" >
+                 <number>6</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                   <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="featureNodeEditFromLabel" >
+                    <property name="text" >
+                     <string>From</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureNodeEditFromLineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureNodeEditFromLineEdit" />
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="featureNodeEditToLabel" >
+                    <property name="text" >
+                     <string>To</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureNodeEditToLineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureNodeEditToLineEdit" />
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                   <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                   <number>6</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="featureNodeEditNdIdxLabel" >
+                    <property name="text" >
+                     <string>NdIdx</string>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>featureNodeEditNdIdxLineEdit</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="featureNodeEditNdIdxLineEdit" />
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="featureNodeEditAsLabel" >
+                <property name="text" >
+                 <string>As</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>featureNodeEditAsComboBox</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="featureNodeEditAsComboBox" >
+                <item>
+                 <property name="text" >
+                  <string>RidgeNd</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CornerNd</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>FlatNd</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Dense&amp;&amp;TopoTrans" >
+      <attribute name="title" >
+       <string>Dense&amp;&amp;TopoTrans</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QToolBox" name="denseAndTopoTransToolBox" >
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page_6" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>249</width>
+            <height>419</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Density Specification</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="uniformDensityGroupBox" >
+             <property name="title" >
+              <string>Uniform Density</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="globalSpacingLabel" >
+                <property name="text" >
+                 <string>Global Spacing:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>globalSpacingLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="globalSpacingLineEdit" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="bkgAndSorGroupBox" >
+             <property name="title" >
+              <string>Background &amp;&amp; Source</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="ba3FilePushButton" >
+                <property name="text" >
+                 <string>Ba3 File</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="ba3FileLineEdit" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="geometricDensityGroupBox" >
+             <property name="title" >
+              <string>Gometric Density</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="proportionalityCoefficientLabel" >
+                <property name="text" >
+                 <string>Proportionality Coefficient:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>proportionalityCoefficientLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="proportionalityCoefficientLineEdit" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>261</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_7" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>193</width>
+            <height>209</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Density Correction</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="mshGradContGroupBox" >
+             <property name="title" >
+              <string>Mesh Gradation Control</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QVBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="contHVarRadioButton" >
+                <property name="text" >
+                 <string>Control H-Variation</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" >
+                <property name="margin" >
+                 <number>0</number>
+                </property>
+                <property name="spacing" >
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="alphaLabel" >
+                  <property name="text" >
+                   <string>Alpha:</string>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>alphaLineEdit</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="alphaLineEdit" />
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="reduceHShockRadioButton" >
+                <property name="text" >
+                 <string>Reduce H-Shock</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" >
+                <property name="margin" >
+                 <number>0</number>
+                </property>
+                <property name="spacing" >
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="betaLabel" >
+                  <property name="text" >
+                   <string>Beta:</string>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>betaLineEdit</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="betaLineEdit" />
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="densitySmoothingGroupBox" >
+             <property name="title" >
+              <string>Density Smoothing</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="parameterLabel" >
+                <property name="text" >
+                 <string>Parameter:</string>
+                </property>
+                <property name="buddy" >
+                 <cstring>parameterLineEdit</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="parameterLineEdit" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>251</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_8" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>184</width>
+            <height>143</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Topology Transformation</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="topoTransGroupBox" >
+             <property name="title" >
+              <string>Topology Transformations</string>
+             </property>
+             <layout class="QVBoxLayout" >
+              <property name="margin" >
+               <number>9</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="edgeSplitRadioButton" >
+                <property name="text" >
+                 <string>Edge Split</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="vertexSplitRadioButton" >
+                <property name="text" >
+                 <string>Vertex Split</string>
+                </property>
+                <property name="checked" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="edgeCollapseCheckBox" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Edge Collapse</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="edgeSwapCheckBox" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Edge Swap</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>271</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="denseAndTopoTransExecutePushButton" >
+         <property name="text" >
+          <string>Execute</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Smoothing" >
+      <attribute name="title" >
+       <string>Smoothing</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QToolBox" name="smoothingToolBox" >
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page_9" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>249</width>
+            <height>166</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>mtoolsurf's Algorithm</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>9</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="smmethodLabel" >
+               <property name="text" >
+                <string>smmethod:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>smmethodLineEdit</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="smmethodLineEdit" />
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="nsmoothsurfLabel" >
+               <property name="text" >
+                <string>nsmoothsurf:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>nsmoothsurfLineEdit</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="nsmoothsurfLineEdit" />
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>0</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="relaxsurfLabel" >
+               <property name="text" >
+                <string>relaxsurf:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>relaxsurfLineEdit</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="relaxsurfLineEdit" />
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_10" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>249</width>
+            <height>166</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Other's Algorithm</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="page_11" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>249</width>
+            <height>166</height>
+           </rect>
+          </property>
+          <attribute name="label" >
+           <string>Reserved</string>
+          </attribute>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="smoothingExecutePushButton" >
+         <property name="text" >
+          <string>Execute</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>161</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>contHVarRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>alphaLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>165</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>61</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>contHVarRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>alphaLineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>165</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>186</x>
+     <y>190</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reduceHShockRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>betaLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>165</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>58</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>reduceHShockRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>betaLineEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>165</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>183</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

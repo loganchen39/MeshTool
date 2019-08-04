@@ -1,0 +1,184 @@
+<ui version="4.0" >
+ <class>MTMainWindow</class>
+ <widget class="QMainWindow" name="MTMainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MeshTool</string>
+  </property>
+  <widget class="QWidget" name="centralWidget" />
+  <widget class="QMenuBar" name="menuBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Help" >
+    <property name="title" >
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout_MeshTool" />
+   </widget>
+   <widget class="QMenu" name="menu_Tools" >
+    <property name="title" >
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionVertex_Normal_Compute" />
+    <addaction name="actionMesh_Analysis" />
+   </widget>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_New" />
+    <addaction name="actionLoad_Mesh" />
+    <addaction name="separator" />
+    <addaction name="actionSave_BkgGS" />
+    <addaction name="actionSave_BkgGS_as" />
+    <addaction name="actionSave_Mesh" />
+    <addaction name="actionSave_Mesh_As" />
+    <addaction name="separator" />
+    <addaction name="actionRecent_Files" />
+    <addaction name="separator" />
+    <addaction name="action_Close_All" />
+    <addaction name="action_Exit" />
+   </widget>
+   <widget class="QMenu" name="menu_View" >
+    <property name="title" >
+     <string>&amp;View</string>
+    </property>
+    <addaction name="separator" />
+    <addaction name="actionTool_Bar" />
+    <addaction name="actionStatus_Bar" />
+    <addaction name="separator" />
+    <addaction name="action_Font_2" />
+    <addaction name="action_Backgroud_Color" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menu_View" />
+   <addaction name="menu_Tools" />
+   <addaction name="menu_Help" />
+  </widget>
+  <widget class="QToolBar" name="mainToolBar" >
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea" >
+    <number>4</number>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar" />
+  <action name="action_New" >
+   <property name="text" >
+    <string>Load &amp;BkgGS...</string>
+   </property>
+  </action>
+  <action name="actionLoad_Mesh" >
+   <property name="text" >
+    <string>Load &amp;Mesh...</string>
+   </property>
+  </action>
+  <action name="actionClose_All" >
+   <property name="text" >
+    <string>&amp;Close All</string>
+   </property>
+  </action>
+  <action name="actionSave_BkgGS" >
+   <property name="text" >
+    <string>Save BkgGS</string>
+   </property>
+  </action>
+  <action name="actionSave_BkgGS_as" >
+   <property name="text" >
+    <string>Save BkgGS as...</string>
+   </property>
+  </action>
+  <action name="actionSave_Mesh" >
+   <property name="text" >
+    <string>Save Mesh</string>
+   </property>
+  </action>
+  <action name="actionSave_Mesh_As" >
+   <property name="text" >
+    <string>Save Mesh As...</string>
+   </property>
+  </action>
+  <action name="actionRecent_Files" >
+   <property name="text" >
+    <string>Recent Files</string>
+   </property>
+  </action>
+  <action name="action_Close_All" >
+   <property name="text" >
+    <string>&amp;Close All</string>
+   </property>
+  </action>
+  <action name="action_Exit" >
+   <property name="text" >
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="actionControl_Panel" >
+   <property name="text" >
+    <string>Control Panel</string>
+   </property>
+  </action>
+  <action name="actionOutput_Panel" >
+   <property name="text" >
+    <string>Output Panel</string>
+   </property>
+  </action>
+  <action name="actionTool_Bar" >
+   <property name="text" >
+    <string>Tool Bar</string>
+   </property>
+  </action>
+  <action name="actionStatus_Bar" >
+   <property name="text" >
+    <string>Status Bar</string>
+   </property>
+  </action>
+  <action name="actionVertex_Normal_Compute" >
+   <property name="text" >
+    <string>Vertex Normal Compute...</string>
+   </property>
+  </action>
+  <action name="actionMesh_Analysis" >
+   <property name="text" >
+    <string>Mesh Analysis...</string>
+   </property>
+  </action>
+  <action name="action_Font" >
+   <property name="text" >
+    <string>&amp;Font...</string>
+   </property>
+  </action>
+  <action name="action_Backgroud_Color" >
+   <property name="text" >
+    <string>&amp;Background Color...</string>
+   </property>
+  </action>
+  <action name="action_Font_2" >
+   <property name="text" >
+    <string>Background &amp;Font...</string>
+   </property>
+  </action>
+  <action name="actionAbout_MeshTool" >
+   <property name="text" >
+    <string>About MeshTool</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,969 @@
+{\rtf1\ansi\ansicpg936\deff0\deflang1033\deflangfe2052{\fonttbl{\f0\fnil\fprq1\fcharset134 \'d0\'c2\'cb\'ce\'cc\'e5;}{\f1\fmodern\fprq6\fcharset134 \'cb\'ce\'cc\'e5;}}
+{\colortbl ;\red0\green0\blue0;\red0\green0\blue255;\red0\green128\blue0;}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\cf1\lang2052\b\f0\fs32 // version 1\cf2\b0\fs18\par
+template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::remesh()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it; \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf2 do\par
+\cf0\tab\{\par
+\tab\tab go_on = \cf2 false\cf0 ;\par
+\par
+\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it)\par
+\tab\tab\{\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio < sqrt2 / 2.0) \cf3 // derefine by edge collapsing\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab\cf3 // for debugging\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (1079 == e_it.handle().idx())\par
+\tab\tab\tab\tab\tab\cf2 int\cf0  kk = 1;\par
+\par
+\par
+\tab\tab\tab\tab\cf3 // boundary edge and ridge edge are much alike\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (ET_Boundary == mesh_.\cf2 property\cf0 (edge_type, e_it) || ET_Ridge == mesh_.\cf2 property\cf0 (edge_type, e_it))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner() && mesh_.\cf2 property\cf0 (node_type, vh1).is_corner())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner()) \cf3 // vh1->vh0\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh0));\par
+\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\par
+\tab\tab\tab\tab\tab\tab if (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab go_on = true;\par
+\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh1).is_corner()) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh1));\par
+\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\par
+\tab\tab\tab\tab\tab\tab if (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab go_on = true;\par
+\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // no corner node\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh1));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\tab\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh0));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\tab\cf3 //if (!go_on)\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf3 //go_on = true;\par
+\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\cf3 /** do not use this code segment any more\par
+\tab\tab\tab\tab\tab\tab if (ET_Boundary == mesh_.property(edge_type, e_it))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab eh0 = find_adjacent_boundary_edge(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab eh1 = find_adjacent_boundary_edge(heh1);\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab else\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab eh0 = find_adjacent_ridge_edge(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab eh1 = find_adjacent_ridge_edge(heh1);\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\tab length_ratio_0 = calc_edge_length_ratio(eh0);\par
+\tab\tab\tab\tab\tab\tab length_ratio_1 = calc_edge_length_ratio(eh1);\par
+\par
+\tab\tab\tab\tab\tab\tab if (length_ratio_0 < length_ratio_1)\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh0));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\par
+\tab\tab\tab\tab\tab\tab\tab go_on = true;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab else\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh1));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\tab go_on = true;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab */\par
+\cf0\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\cf2 else\cf0  \cf3 // ET_Flat\par
+\cf0\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  ( !mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && !mesh_.\cf2 property\cf0 (node_type, vh1).is_flat())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && mesh_.\cf2 property\cf0 (node_type, vh1).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh1));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh0));\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\tab\cf3 //if (!go_on)\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf3 //go_on = true;\par
+\cf0\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh1));\par
+\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\tab\cf3 //if (!go_on)\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf3 //go_on = true;\par
+\cf0\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // vh1 is flat\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 /**\par
+\tab\tab\tab\tab\tab\tab assert(mesh_.is_collapse_ok(heh0));\par
+\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab */\par
+\par
+\cf0\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\tab\cf3 //if (!go_on)\par
+\cf0\tab\tab\tab\tab\tab\tab\tab\cf3 //go_on = true;\par
+\cf0\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab mesh_.garbage_collection(); \cf3 // put it below ? then assertion failed, invalid halfedge handle\par
+\par
+\cf0\tab\tab\tab\} \cf3 // end of derefinement\par
+\par
+\cf0\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (edge_length_ratio > sqrt2) \cf3 // refine by edge/vertex splitting\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab p = (mesh_.point(vh0) + mesh_.point(vh1)) / 2.0; \cf3 // todo: to use interpolating curve\par
+\cf0\tab\tab\tab\tab mesh_.split(e_it.handle(), p);\par
+\par
+\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\} \cf3 // end of for loop\par
+\par
+\cf0\tab\tab\cf3 //mesh_.garbage_collection(); // ok ? here or somewhere else ?\par
+\cf0\tab\tab mesh_.update_face_normals();\par
+\tab\tab mesh_.update_vertex_normals();\par
+\par
+\tab\}\cf2 while\cf0  (go_on);\par
+\par
+\par
+\par
+\cf1\b\fs32 // version 2\cf3\b0\fs18\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::remesh()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it; \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf2 do\par
+\cf0\tab\{\par
+\tab\tab go_on = \cf2 false\cf0 ;\par
+\par
+\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it)\par
+\tab\tab\{\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(e_it.handle()).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio < sqrt2 / 2.0) \cf3 // derefine by edge collapsing\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab\cf3 // boundary edge and ridge edge are much alike\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (ET_Boundary == mesh_.\cf2 property\cf0 (edge_type, e_it) || ET_Ridge == mesh_.\cf2 property\cf0 (edge_type, e_it))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner() && mesh_.\cf2 property\cf0 (node_type, vh1).is_corner())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner()) \cf3 // vh1->vh0\par
+\cf0\tab\tab\tab\tab\tab\{\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh1).is_corner()) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // no corner node\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\cf2 else\cf0  \cf3 // ET_Flat\par
+\cf0\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  ( !mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && !mesh_.\cf2 property\cf0 (node_type, vh1).is_flat())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && mesh_.\cf2 property\cf0 (node_type, vh1).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // vh1 is flat\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\cf3 //mesh_.garbage_collection(); // put it below ? then assertion failed, invalid halfedge handle\par
+\par
+\cf0\tab\tab\tab\} \cf3 // end of derefinement\par
+\par
+\cf0\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (edge_length_ratio > sqrt2) \cf3 // refine by edge/vertex splitting\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab p = (mesh_.point(vh0) + mesh_.point(vh1)) / 2.0; \cf3 // todo: to use interpolating curve\par
+\cf0\tab\tab\tab\tab mesh_.split(e_it.handle(), p);\par
+\par
+\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\} \cf3 // end of for loop\par
+\par
+\cf0\tab\tab mesh_.garbage_collection(); \cf3 // ok ? here or above ?\par
+\cf0\tab\tab mesh_.update_face_normals();\par
+\tab\tab mesh_.update_vertex_normals();\par
+\par
+\tab\}\cf2 while\cf0  (go_on);\par
+\}\par
+\par
+\par
+\cf1\b\fs32 // version 3\cf3\b0\fs18\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::remesh()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it; \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf2 do\par
+\cf0\tab\{\par
+\tab\tab go_on = \cf2 false\cf0 ;\par
+\par
+\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it)\par
+\tab\tab\{\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(e_it.handle()).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio < sqrt2 / 2.0) \cf3 // derefine by edge collapsing\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab\cf3 // boundary edge and ridge edge are much alike\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (ET_Boundary == mesh_.\cf2 property\cf0 (edge_type, e_it) || ET_Ridge == mesh_.\cf2 property\cf0 (edge_type, e_it))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner() && mesh_.\cf2 property\cf0 (node_type, vh1).is_corner())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner()) \cf3 // vh1->vh0\par
+\cf0\tab\tab\tab\tab\tab\{\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh1).is_corner()) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // no corner node\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\cf2 else\cf0  \cf3 // ET_Flat\par
+\cf0\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  ( !mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && !mesh_.\cf2 property\cf0 (node_type, vh1).is_flat())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && mesh_.\cf2 property\cf0 (node_type, vh1).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // vh1 is flat\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\cf3 //mesh_.garbage_collection(); // put it below ? then assertion failed, invalid halfedge handle\par
+\par
+\cf0\tab\tab\tab\} \cf3 // end of derefinement\par
+\par
+\cf0\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (edge_length_ratio > sqrt2) \cf3 // refine by edge/vertex splitting\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab p = (mesh_.point(vh0) + mesh_.point(vh1)) / 2.0; \cf3 // todo: to use interpolating curve\par
+\cf0\tab\tab\tab\tab\cf3 //mesh_.split(e_it.handle(), p);\par
+\cf0\tab\tab\tab\tab split(e_it.handle(), mesh_.add_vertex(p));\par
+\par
+\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\}\par
+\par
+\tab\tab\} \cf3 // end of for loop\par
+\par
+\cf0\tab\tab mesh_.garbage_collection(); \cf3 // ok ? here or above ?\par
+\cf0\tab\tab mesh_.update_face_normals();\par
+\tab\tab mesh_.update_vertex_normals();\par
+\par
+\tab\}\cf2 while\cf0  (go_on);\par
+\}\f1\fs20\par
+\par
+\par
+\par
+\cf1\b\fs32 // version 4\cf0\b0\fs20\par
+\cf2\f0\fs18 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::coarsen()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it, e_end(mesh_.edges_end()); \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf3 //do\par
+\cf0\tab\cf3 //\{\par
+\cf0\tab\tab\cf3 //go_on = false;\par
+\par
+\cf0\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it) \cf3 // e_end, assertion failed\par
+\cf0\tab\tab\{\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(e_it.handle()).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio < sqrt2 / 2.0) \cf3 // derefine by edge collapsing\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab\cf3 // boundary edge and ridge edge are much alike\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (ET_Boundary == mesh_.\cf2 property\cf0 (edge_type, e_it) || ET_Ridge == mesh_.\cf2 property\cf0 (edge_type, e_it))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner() && mesh_.\cf2 property\cf0 (node_type, vh1).is_corner())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner()) \cf3 // vh1->vh0\par
+\cf0\tab\tab\tab\tab\tab\{\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh1).is_corner()) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // no corner node\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\cf2 else\cf0  \cf3 // ET_Flat\par
+\cf0\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  ( !mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && !mesh_.\cf2 property\cf0 (node_type, vh1).is_flat())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && mesh_.\cf2 property\cf0 (node_type, vh1).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // vh1 is flat\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab mesh_.garbage_collection(); \cf3 // put it below ? then assertion failed, invalid halfedge handle\par
+\par
+\cf0\tab\tab\tab\} \cf3 // end of derefinement\par
+\par
+\cf0\tab\tab\} \cf3 // end of for loop\par
+\par
+\cf0\tab\tab\cf3 //mesh_.garbage_collection(); // ok ? here or above, or even below ?\par
+\cf0\tab\cf3 //\}while (go_on);\par
+\cf0\}\par
+\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::refine()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it, e_end(mesh_.edges_end()); \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf3 //do\par
+\cf0\tab\cf3 //\{\par
+\cf0\tab\tab\cf3 //go_on = false;\par
+\par
+\cf0\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it) \cf3 // e_end, assertion failed\par
+\cf0\tab\tab\{\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(e_it.handle()).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio > sqrt2) \cf3 // refine by edge/vertex splitting\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab p = (mesh_.point(vh0) + mesh_.point(vh1)) / 2.0; \cf3 // todo: to use interpolating curve\par
+\cf0\tab\tab\tab\tab\cf3 //mesh_.split(e_it.handle(), p);\par
+\cf0\tab\tab\tab\tab split(e_it.handle(), mesh_.add_vertex(p));\par
+\par
+\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\tab\cf3 //\} while (go_on);\par
+\cf0\}\par
+\par
+\cf3 // first do coarsen, then refine\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::remesh()\par
+\{\par
+\tab\cf3 //coarsen();\par
+\cf0\tab refine();\par
+\par
+\tab mesh_.update_face_normals();\par
+\tab mesh_.update_vertex_normals();\par
+\}\f1\fs20\par
+\par
+\par
+\par
+\cf1\b\fs32 // version 5\cf0\b0\fs20\par
+\cf1\f0\fs18\'b8\'c4\'d5\'fd\'c1\'cb\'d6\'ae\'c7\'b0version\'b5\'c4\'ba\'dc\'b6\'e0bug\'a3\'ac\'d3\'c8\'c6\'e4\'ca\'c7\'b6\'d4EdgeIter\'b5\'c4\'b4\'a6\'c0\'ed\'a3\'ac\'d2\'f2\'ce\'aa\'cd\'d8\'c6\'cb\'b1\'e4\'bb\'bb\'ba\'f3\par
+EdgeIter\'bb\'f9\'b1\'be\'b2\'bb\'d4\'d9\'d3\'d0\'d0\'a7\'a3\'a1edge collapse\'ca\'b1\'a3\'ac\'d6\'bb\'d7\'f6\'b1\'ea\'bc\'c7\'ba\'cd\'b8\'fc\'d0\'c2\'cd\'d8\'c6\'cb\'c1\'ac\'bd\'d3\'b9\'d8\'cf\'b5\'a3\'ac\par
+\'cb\'f9\'d2\'d4\'b4\'cb\'ca\'b1\'c6\'e4EdgeIter\'bb\'b9\'ca\'c7\'d3\'d0\'d0\'a7\'b5\'c4\'a1\'a3\cf2\par
+template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::coarsen()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it; \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf2 do\par
+\cf0\tab\{\par
+\tab\tab go_on = \cf2 false\cf0 ;\par
+\par
+\tab\tab\cf2 for\cf0  (e_it = mesh_.edges_begin(); e_it != mesh_.edges_end(); ++e_it) \cf3 // if use e_end, then assertion failed\par
+\cf0\tab\tab\{\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(e_it.handle()).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(e_it.handle());\par
+\par
+\tab\tab\tab heh0   = mesh_.halfedge_handle(e_it.handle(), 0);\par
+\tab\tab\tab heh1   = mesh_.halfedge_handle(e_it.handle(), 1);\par
+\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio < sqrt2 / 2.0) \cf3 // derefine by edge collapsing\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab\cf3 // boundary edge and ridge edge are much alike\par
+\cf0\tab\tab\tab\tab\cf2 if\cf0  (ET_Boundary == mesh_.\cf2 property\cf0 (edge_type, e_it) || ET_Ridge == mesh_.\cf2 property\cf0 (edge_type, e_it))\par
+\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner() && mesh_.\cf2 property\cf0 (node_type, vh1).is_corner())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh0).is_corner()) \cf3 // vh1->vh0\par
+\cf0\tab\tab\tab\tab\tab\{\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  (mesh_.\cf2 property\cf0 (node_type, vh1).is_corner()) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // no corner node\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\cf2 else\cf0  \cf3 // ET_Flat\par
+\cf0\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\cf2 if\cf0  ( !mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && !mesh_.\cf2 property\cf0 (node_type, vh1).is_flat())\par
+\tab\tab\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() && mesh_.\cf2 property\cf0 (node_type, vh1).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf3 // use node's ratio as criterio\par
+\cf0\tab\tab\tab\tab\tab\tab node_ratio_0 = calc_node_length_ratio(vh0);\par
+\tab\tab\tab\tab\tab\tab node_ratio_1 = calc_node_length_ratio(vh1);\par
+\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (node_ratio_0 < node_ratio_1) \cf3 // vh0->vh1\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\cf2 else\par
+\cf0\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf2 if\cf0  ( mesh_.\cf2 property\cf0 (node_type, vh0).is_flat() )\par
+\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh1))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh1);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\tab\tab\tab\tab\tab\tab\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\cf2 else\cf0  \cf3 // vh1 is flat\par
+\cf0\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (mesh_.is_collapse_ok(heh0))\par
+\tab\tab\tab\tab\tab\tab\{\par
+\tab\tab\tab\tab\tab\tab\tab mesh_.collapse(heh0);\par
+\tab\tab\tab\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\tab\}\par
+\tab\tab\tab\tab\} \cf3 // end of "else // ET_Flat"\par
+\par
+\cf0\tab\tab\tab\tab\cf3 //mesh_.garbage_collection(); // put it below ? then assertion failed, invalid halfedge handle, here would make e_it invalid\par
+\par
+\cf0\tab\tab\tab\} \cf3 // end of derefinement, end of "if (edge_length_ratio < sqrt2 / 2.0) // derefine by edge collapsing"\par
+\par
+\cf0\tab\tab\} \cf3 // end of for loop \par
+\par
+\cf0\tab\tab mesh_.garbage_collection(); \cf3 // ok ? here or above, or even below ? better than above\par
+\cf0\tab\tab mesh_.update_face_normals();\par
+\tab\tab mesh_.update_vertex_normals(); \cf3 // should be put here for checking is_collapse_ok(HalfedgeHandle _heh)\par
+\par
+\cf0\tab\}\cf2 while\cf0  (go_on);\par
+\}\par
+\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::refine()\par
+\{\par
+\tab\cf2 typename\cf0  Mesh::EdgeIter e_it; \cf3 // e_end, add/delete operations, iterators may become invalid or wrong\par
+\cf0\tab\cf2 unsigned\cf0  \cf2 int\cf0  e_idx, e_num;\par
+\tab HalfedgeHandle heh0, heh1;\par
+\tab VertexHandle   vh0, vh1;\par
+\tab EdgeHandle     eh, eh0, eh1;\par
+\tab Scalar node_ratio_0 = 0.0, node_ratio_1 = 0.0;\par
+\par
+\tab Point p(0.0, 0.0, 0.0);\par
+\tab Scalar edge_length_ratio = 0.0;\par
+\tab\cf2 bool\cf0  go_on;\par
+\par
+\tab\cf2 do\par
+\cf0\tab\{\par
+\tab\tab go_on = \cf2 false\cf0 ;\par
+\tab\tab e_num = mesh_.n_edges();\par
+\par
+\tab\tab\cf2 for\cf0  (e_idx = 0; e_idx < e_num; e_idx++)\par
+\tab\tab\{\par
+\tab\tab\tab eh = mesh_.edge_handle(e_idx);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (mesh_.status(eh).deleted())\par
+\tab\tab\tab\tab\cf2 continue\cf0 ;\par
+\par
+\tab\tab\tab edge_length_ratio = calc_edge_length_ratio(eh);\par
+\par
+\tab\tab\tab\cf2 if\cf0  (edge_length_ratio > sqrt2) \cf3 // refine by edge/vertex splitting\par
+\cf0\tab\tab\tab\{\par
+\tab\tab\tab\tab heh0   = mesh_.halfedge_handle(eh, 0);\par
+\tab\tab\tab\tab heh1   = mesh_.halfedge_handle(eh, 1);\par
+\tab\tab\tab\tab vh0    = mesh_.to_vertex_handle(heh0);\par
+\tab\tab\tab\tab vh1    = mesh_.to_vertex_handle(heh1);\par
+\par
+\tab\tab\tab\tab p = (mesh_.point(vh0) + mesh_.point(vh1)) / 2.0; \cf3 // todo: to use interpolating curve\par
+\cf0\tab\tab\tab\tab\cf3 //mesh_.split(e_it.handle(), p);\par
+\cf0\tab\tab\tab\tab split(eh, mesh_.add_vertex(p));\par
+\par
+\tab\tab\tab\tab\cf2 if\cf0  (!go_on)\par
+\tab\tab\tab\tab\tab go_on = \cf2 true\cf0 ;\par
+\tab\tab\tab\}\par
+\tab\tab\}\par
+\par
+\tab\} \cf2 while\cf0  (go_on);\par
+\}\par
+\par
+\par
+\cf3 // first do coarsen, then refine\par
+\cf2 template\cf0 <\cf2 class\cf0  Mesh>\par
+\cf2 void\cf0  RemesherT<Mesh>::remesh()\par
+\{\par
+\tab coarsen();\par
+\tab refine();\par
+\par
+\tab mesh_.update_face_normals();\par
+\tab mesh_.update_vertex_normals();\par
+\}\f1\fs20\par
+\par
+\par
+\par
+}
+ 
